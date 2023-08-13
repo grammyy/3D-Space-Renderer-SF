@@ -1,0 +1,59 @@
+--@name 3D Space renderer
+--@author Elias & Bullet Paincakes
+--@client
+
+local FPS = 60
+
+local next_frame = 0 
+local fps_delta = 1/FPS
+
+local renderer=class("renderer")
+
+function renderer:initialize(pos,name,size,parent)
+    self.pos=pos
+    self.size=size
+
+    render.createRenderTarget(name)
+
+    self.mat = material.create("UnlitGeneric") 
+    self.mat:setTextureRenderTarget("$basetexture",name) 
+    self.mat:setInt("$flags", 0)   
+    self.mat:setInt("$flags",256) 
+    
+    hook.add("renderoffscreen","space_"..table.address(self),function()
+        
+        local now = timer.systime()
+        
+        if next_frame > now then 
+            return 
+        end
+        
+        next_frame = now + fps_delta
+    
+        render.selectRenderTarget(name)
+        render.clear(Color(0,0,0,0))
+    
+        render.pushViewMatrix({
+            type   = "3D",
+            origin = render.getOrigin(), --screenEnt:localToWorld(screenEnt:worldToLocal(render.getOrigin()) * Vector(1, 1, -1))
+            angles = (self.space:getPos()-player():getEyePos()):getAngle(),
+            fov    = 180-(2*(math.deg(math.atan((player():getEyePos():getDistance(self.space:getPos()))/(self.size*3))))), --(pla0yer():getPos():getDistance(space:getPos()))
+            aspect = 1,
+        })        
+    end)
+    
+    self.space = holograms.create(pos, Angle(90,-90,0), "models/holograms/plane.mdl",Vector(self.size))
+    self.space:setMaterial("!" .. self.mat:getName())
+    
+    if parent then
+        self.space:setParent(parent)
+    end
+
+    hook.add("think","space_"..table.address(self),function()
+        try(function()
+            self.space:setAngles((player():getEyePos()-self.space:getPos()):getAngle()+Angle(90,0,0))
+        end)
+    end)
+    
+    return self
+end
