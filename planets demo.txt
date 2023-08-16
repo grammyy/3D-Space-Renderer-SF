@@ -84,4 +84,20 @@ hook.add("renderoffscreen", "", function()
     
     render.setColor(Color(248,220,173))
     render.draw3DSphere(chip():getPos()+saturn:getForward()*19,0.85,50,50)
+    
+    render.popViewMatrix()
+    
+--[[
+    local mer=((chip():getPos()+mercury:getForward()*1.7)):toScreen()
+    render.drawText(mer.x-445,mer.y-35,"Mercury",1)
+    
+    local ven=((chip():getPos()+venus:getForward()*2.6)):toScreen()
+    render.drawText(ven.x-445,ven.y-35,"Venus",1)
+    
+    local ear=((chip():getPos()+earth:getForward()*3.8)):toScreen()
+    render.drawText(ear.x-445,ear.y-35,"Earth",1)
+    
+    local mar=((chip():getPos()+mars:getForward()*5.6)):toScreen()
+    render.drawText(mar.x-445,mar.y-35,"Mars",1)
+]]
 end)
