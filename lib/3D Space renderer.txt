@@ -47,14 +47,18 @@ function renderer:initialize(pos,name,size,parent)
         render.selectRenderTarget(name)
         
         render.clear(Color(0,0,0,0))
-    
+        
         render.pushViewMatrix({
             type   = "3D",
             origin = render.getOrigin(), --screenEnt:localToWorld(screenEnt:worldToLocal(render.getOrigin()) * Vector(1, 1, -1))
-            angles = (self.space:getPos()-player():getEyePos()):getAngle(),
+            angles = (self.space:getPos()-math.lerpVector(0.2,player():getEyePos(),player():getEyePos()+(player():getVelocity()/100))):getAngle(),
             fov    = 180-(2*(math.deg(math.atan((player():getEyePos():getDistance(self.space:getPos()))/(self.size*self.viewScale))))), --(pla0yer():getPos():getDistance(space:getPos()))
             aspect = 1,
         })   
+        
+        if self.renderhook then
+            self.renderhook()
+        end
     end)
     
     self.space = holograms.create(pos, Angle(90,-90,0), "models/holograms/plane.mdl",Vector(self.size))
