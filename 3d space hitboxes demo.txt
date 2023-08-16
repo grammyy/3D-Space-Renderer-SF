@@ -1,4 +1,4 @@
---@name 3d space hitboxes
+--@name 3d space hitboxes demo
 --@author Elias
 --@include lib/3D_Space_renderer.txt
 
