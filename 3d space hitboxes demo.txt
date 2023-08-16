@@ -57,7 +57,7 @@ else
         sync=net.readTable()
     end)
     
-    hook.add("renderoffscreen", "", function()
+    space.renderhook=function()
         
         render.draw3DWireframeBox(chip():getPos(),(player():getEyePos()-chip():getPos()):getAngle()+Angle(90,0,0),Vector(-size*(5+(2/3)),-size*(5+(2/3)),0),Vector(size*(5+(2/3)),size*(5+(2/3)),1))
          
@@ -97,9 +97,9 @@ else
 ]]
                 local bonePos = (entity:getPos()):toScreen()
                 
-                render.setColor(Color(timer.realtime()*40+i+entity:getPos()[3]*2,1,1):hsvToRGB()) 
+                render.setColor(Color(timer.realtime()*40+entity:getPos()[3]*2+127,1,1):hsvToRGB()) 
                 render.drawText(bonePos.x-450,bonePos.y-40,entity:getClass(),1)
             end)
         end
-    end)
+    end
 end

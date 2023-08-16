@@ -52,7 +52,7 @@ end
 
 local space=renderer:new(chip():getPos(),"3d",10,chip())
 
-hook.add("renderoffscreen", "", function()
+space.renderhook=function()
     ring(Color(255,155,112),chip(),3,Angle(0,1,0))
     ring(Color(255,155,112),chip(),4.5,Angle(0,1,0))
     ring(Color(255,155,112),chip(),7,Angle(0,1,0))
@@ -100,4 +100,4 @@ hook.add("renderoffscreen", "", function()
     local mar=((chip():getPos()+mars:getForward()*5.6)):toScreen()
     render.drawText(mar.x-445,mar.y-35,"Mars",1)
 ]]
-end)
+end
