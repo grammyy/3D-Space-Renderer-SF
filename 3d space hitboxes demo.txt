@@ -49,7 +49,7 @@ else
     local sync={}
     
     local size=3
-    local space=renderer:new(chip():getPos(),"3d",size,chip())
+    local space=renderer:new(chip():getPos(),"3d",size,chip(),true) --false,chip():getAngles()
     
     space:setViewScale(6)
     
@@ -59,7 +59,7 @@ else
     
     space.renderhook=function()
         
-        render.draw3DWireframeBox(chip():getPos(),(player():getEyePos()-chip():getPos()):getAngle()+Angle(90,0,0),Vector(-size*(5+(2/3)),-size*(5+(2/3)),0),Vector(size*(5+(2/3)),size*(5+(2/3)),1))
+        render.draw3DWireframeBox(chip():getPos(),space.space:getAngles(),Vector(-size*(5+(3/4)),-size*(5+(3/4)),0),Vector(size*(5+(3/4)),size*(5+(3/4)),1))
          
         for _,entity in pairs(sync) do
             try(function()

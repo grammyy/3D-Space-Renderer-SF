@@ -20,12 +20,18 @@ function await(name,var,func)
     end)
 end
 ]]
+local function lockView(space)
+    hook.add("think","space_"..table.address(space),function()
+        space.space:setAngles((player():getEyePos()-space.space:getPos()):getAngle()+Angle(90,0,0))
+    end)
+end
 
-function renderer:initialize(pos,name,size,parent)
+function renderer:initialize(pos,name,size,parent,lock,angles)
     self.pos=pos
     self.size=size
     self.viewScale=3
     self.name=name
+    self.lock=lock
     
     render.createRenderTarget(self.name)
 
@@ -50,31 +56,53 @@ function renderer:initialize(pos,name,size,parent)
         
         render.pushViewMatrix({
             type   = "3D",
-            origin = render.getOrigin(), --screenEnt:localToWorld(screenEnt:worldToLocal(render.getOrigin()) * Vector(1, 1, -1))
-            angles = (self.space:getPos()-math.lerpVector(0.2,player():getEyePos(),player():getEyePos()+(player():getVelocity()/100))):getAngle(),
-            fov    = 180-(2*(math.deg(math.atan((player():getEyePos():getDistance(self.space:getPos()))/(self.size*self.viewScale))))), --(pla0yer():getPos():getDistance(space:getPos()))
+            origin = self.lock and render.getOrigin() or self.space:getPos()+self.space:getUp()*(player():getEyePos():getDistance(self.space:getPos())), --screenEnt:localToWorld(screenEnt:worldToLocal(render.getOrigin()) * Vector(1, 1, -1))
+            angles = self.lock and (self.space:getPos()-math.lerpVector(0.2,player():getEyePos(),player():getEyePos()+(player():getVelocity()/100))):getAngle() or self.space:getAngles()+Angle(90,0,0),
+            fov    = 180-((self.lock and 1 or -1)*(2*(math.deg(math.atan((player():getEyePos():getDistance(self.space:getPos()))/(self.size*self.viewScale)))))), --(pla0yer():getPos():getDistance(space:getPos()))
             aspect = 1,
         })   
+        
+
+--[[
+        render.pushViewMatrix({
+            type   = "3D",
+            origin = self.space:getPos()+self.space:getUp()*(player():getEyePos():getDistance(self.space:getPos())), --screenEnt:localToWorld(screenEnt:worldToLocal(render.getOrigin()) * Vector(1, 1, -1))
+            angles = self.space:getAngles()+Angle(90,0,0),
+            fov    = 180+(2*(math.deg(math.atan((player():getEyePos():getDistance(self.space:getPos()))/(self.size*self.viewScale))))), --(pla0yer():getPos():getDistance(space:getPos()))
+            aspect = 1,
+        })   
+]]
+
         
         if self.renderhook then
             self.renderhook()
         end
     end)
     
-    self.space = holograms.create(pos, Angle(90,-90,0), "models/holograms/plane.mdl",Vector(self.size))
+    self.space = holograms.create(pos, parent and parent:localToWorldAngles(Angle(90,-90,0)) or angles+Angle(90,-90,0), "models/holograms/plane.mdl",Vector(self.size))
     self.space:setMaterial("!" .. self.mat:getName())
     
     if parent then
         self.space:setParent(parent)
     end
 
-    hook.add("think","space_"..table.address(self),function()
-        self.space:setAngles((player():getEyePos()-self.space:getPos()):getAngle()+Angle(90,0,0))
-    end)
+    if self.lock then
+        lockView(self)
+    end
     
     return self
 end
 
 function renderer:setViewScale(viewScale)
     self.viewScale=viewScale
+end
+
+function renderer:setLock(bool)
+    self.lock=bool
+    
+    if bool then
+        self.lockView(self)
+    else
+        hook.remove("think","space_"..table.address(self))
+    end
 end

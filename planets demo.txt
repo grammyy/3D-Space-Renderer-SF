@@ -50,7 +50,7 @@ function ring(color,parent,radius,Ang)
     end
 end
 
-local space=renderer:new(chip():getPos(),"3d",10,chip())
+local space=renderer:new(chip():getPos(),"3d",10,chip(),true)
 
 space.renderhook=function()
     ring(Color(255,155,112),chip(),3,Angle(0,1,0))
