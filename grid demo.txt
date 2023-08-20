@@ -5,7 +5,7 @@
 
 require("lib/3D_Space_renderer.txt")
 
-local space=renderer:new(chip():getPos(),"3d",15,chip())
+local space=renderer:new(chip():getPos(),"3d",15,chip(),true)
 
 space.renderhook=function()
     render.setColor(Color(210,210,210))
