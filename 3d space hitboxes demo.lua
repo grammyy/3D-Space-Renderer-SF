@@ -1,6 +1,6 @@
 --@name 3d space hitboxes demo
 --@author Elias
---@include lib/3D_Space_renderer.txt
+--@include lib/3D_Space_renderer.lua
 
 if SERVER then
     
@@ -44,7 +44,7 @@ if SERVER then
 
 else
     
-    require("lib/3D_Space_renderer.txt")
+    require("lib/3D_Space_renderer.lua")
     
     local sync={}
     

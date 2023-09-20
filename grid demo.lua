@@ -1,9 +1,9 @@
 --@name 3d grid demo
 --@author Elias
---@include lib/3D_Space_renderer.txt
+--@include lib/3D_Space_renderer.lua
 --@client
 
-require("lib/3D_Space_renderer.txt")
+require("lib/3D_Space_renderer.lua")
 
 local space=renderer:new(chip():getPos(),"3d",15,chip(),true)
 
