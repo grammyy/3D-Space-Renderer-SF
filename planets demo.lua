@@ -1,9 +1,9 @@
 --@name Planets demo
 --@author Elias
---@include lib/3D_Space_renderer.lua
+--@include libs/3D_Space_renderer.lua
 --@client
 
-require("lib/3D_Space_renderer.lua")
+require("libs/3D_Space_renderer.lua")
 
 local rotate=0
 
@@ -87,17 +87,18 @@ space.renderhook=function()
     
     render.popViewMatrix()
     
---[[
-    local mer=((chip():getPos()+mercury:getForward()*1.7)):toScreen()
-    render.drawText(mer.x-445,mer.y-35,"Mercury",1)
+    local offset=chip():getPos()-Vector(0,0,0.5)
+    local mer=space:toScreen(offset+mercury:getForward()*2)
+    local ven=space:toScreen(offset+venus:getForward()*3)
+    local ear=space:toScreen(offset+earth:getForward()*4.4)
+    local mar=space:toScreen(offset+mars:getForward()*6.3)
+    local jup=space:toScreen(offset+jupiter:getForward()*8.2)
+    local sat=space:toScreen(offset+saturn:getForward()*11)
     
-    local ven=((chip():getPos()+venus:getForward()*2.6)):toScreen()
-    render.drawText(ven.x-445,ven.y-35,"Venus",1)
-    
-    local ear=((chip():getPos()+earth:getForward()*3.8)):toScreen()
-    render.drawText(ear.x-445,ear.y-35,"Earth",1)
-    
-    local mar=((chip():getPos()+mars:getForward()*5.6)):toScreen()
-    render.drawText(mar.x-445,mar.y-35,"Mars",1)
-]]
+    render.drawText(mer.x,mer.y,"Mercury",1)
+    render.drawText(ven.x,ven.y,"Venus  ",1)
+    render.drawText(ear.x,ear.y,"Earth  ",1)
+    render.drawText(mar.x,mar.y,"Mars   ",1)
+    render.drawText(jup.x,jup.y,"Jupiter",1)
+    render.drawText(sat.x,sat.y,"Saturn ",1)
 end
