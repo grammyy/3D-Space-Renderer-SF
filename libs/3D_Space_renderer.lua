@@ -2,107 +2,60 @@
 --@author Elias & Bullet Paincakes
 --@client
 
-local FPS = 60
+render.createRenderer=class("renderer")
 
-local next_frame = 0 
-local fps_delta = 1/FPS
-
-renderer=class("renderer")
-
-local function lockView(space)
-    hook.add("think","space"..table.address(space),function()
-        space.space:setAngles((render.getOrigin()-space.space:getPos()):getAngle()+Angle(90,0,0))
+function render.createRenderer:initialize(data,parent)
+    self.data=data
+    
+    if !self.data.size then
+        throw("Size must be defined in the first Argument of \"render.createRender()\".")
+    end
+    
+    render.createRenderTarget(table.address(self))
+    
+    self.mat=material.create("UnlitGeneric") 
+    self.mat:setTextureRenderTarget("$basetexture",table.address(self))
+    self.mat:setInt("$flags",256)
+    
+    self.renderer = holograms.create(self.data.pos or (self.parent:getPos() or Vector()),Angle(),"models/holograms/plane.mdl",Vector(self.data.size))
+    self.renderer:setMaterial("!"..self.mat:getName())
+    self.renderer:setFilterMin(1)
+    self.renderer:setFilterMag(1)
+    
+    if parent then
+        self.renderer:setParent(parent)
+    end
+    
+    hook.add("think",table.address(self),function()
+        self.renderer:setAngles((math.lerpVector(0.2,render.getOrigin(),render.getOrigin()+(player():getVelocity()/100))-self.renderer:getPos()):getAngle()+Angle(90,0,0))
     end)
+    
+    return self
 end
 
-function renderer:calcuFov()
-    return 180-((self.lock and 1 or -1)*(2*(math.deg(math.atan((render.getOrigin():getDistance(self.space:getPos()))/(self.size*self.viewScale))))))
-end
-
-function renderer:pushRendererMatrix()
+function render.createRenderer:draw(func)
+    render.selectRenderTarget(table.address(self))
+    
     render.pushViewMatrix({
         type   = "3D",
-        origin = self.lock and render.getOrigin() or self.space:getPos()+self.space:getUp()*(render.getOrigin():getDistance(self.space:getPos())),
-        angles = self.lock and (self.space:getPos()-math.lerpVector(0.2,render.getOrigin(),render.getOrigin()+(player():getVelocity()/100))):getAngle() or self.space:getAngles()+Angle(90,0,0),
-        fov    = self:calcuFov(),
+        origin = render.getOrigin(),
+        angles = (self.renderer:getPos()-math.lerpVector(0.2,render.getOrigin(),render.getOrigin()+(player():getVelocity()/100))):getAngle(),
+        fov    = 180-((2*(math.deg(math.atan((render.getOrigin():getDistance(self.renderer:getPos()))/(self.data.size*(self.data.scale or 6))))))),
         aspect = 1,
         x = 0,
         y = 0,
         w = 1024,
         h = 1024,
     })
+    
+    func()
 end
 
-function renderer:toScreen(pos)
-    local r=self.space:worldToLocal(trace.intersectRayWithPlane(render.getOrigin(),(pos-render.getOrigin()):getNormalized(), self.space:getPos(), self.space:getUp()))*28.5+Vector(512)
+function render.createRenderer:toScreen(vector)
+    local vec=self.renderer:worldToLocal(trace.intersectRayWithPlane(render.getOrigin(),(vector-render.getOrigin()):getNormalized(),self.renderer:getPos(),self.renderer:getUp())or Vector())*(self.data.size*self.data.scale/1.8)+Vector(512)
     
     return {
-        x=r[2],
-        y=r[1]
+        x=vec[2],
+        y=vec[1]
     }
-end
-
-function renderer:initialize(pos,name,size,parent,lock,angles)
-    self.pos=pos
-    self.size=size
-    self.viewScale=3
-    self.name=name
-    self.lock=lock
-    
-    render.createRenderTarget(self.name)
-
-    self.mat = material.create("UnlitGeneric") 
-    self.mat:setTextureRenderTarget("$basetexture",name)
-    self.mat:setInt("$flags", 0)   
-    self.mat:setInt("$flags",256) 
-    
-    hook.add("renderoffscreen","space"..table.address(self),function()
-        local now = timer.systime()
-        
-        if next_frame > now then 
-            return 
-        end
-        
-        next_frame = now + fps_delta
-        scrW, scrH = render.getGameResolution()
-    
-        render.selectRenderTarget(name)
-        
-        render.clear(Color(0,0,0,0))
-        
-        self:pushRendererMatrix()   
-        
-        if self.renderhook then
-            self.renderhook()
-        end
-    end)
-    
-    self.space = holograms.create(pos, parent and parent:localToWorldAngles(Angle(90,-90,0)) or angles+Angle(90,-90,0), "models/holograms/plane.mdl",Vector(self.size))
-    self.space:setMaterial("!" .. self.mat:getName())
-    self.space:setFilterMin(1)
-    self.space:setFilterMag(1)
-    
-    if parent then
-        self.space:setParent(parent)
-    end
-
-    if self.lock then
-        lockView(self)
-    end
-    
-    return self
-end
-
-function renderer:setViewScale(viewScale)
-    self.viewScale=viewScale
-end
-
-function renderer:setLock(bool)
-    self.lock=bool
-    
-    if bool then
-        self.lockView(self)
-    else
-        hook.remove("think","space"..table.address(self))
-    end
 end
