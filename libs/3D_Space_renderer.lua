@@ -13,7 +13,7 @@ function render.createRenderer:initialize(data,parent)
     
     render.createRenderTarget(table.address(self))
     
-    self.mat=material.create("UnlitGeneric") 
+    self.mat=material.create("UnlitGeneric")
     self.mat:setTextureRenderTarget("$basetexture",table.address(self))
     self.mat:setInt("$flags",256)
     
@@ -21,7 +21,7 @@ function render.createRenderer:initialize(data,parent)
     self.renderer:setMaterial("!"..self.mat:getName())
     self.renderer:setFilterMin(1)
     self.renderer:setFilterMag(1)
-    
+
     if parent then
         self.renderer:setParent(parent)
     end
@@ -48,6 +48,9 @@ function render.createRenderer:draw(func)
         h = 1024,
     })
     
+    render.enableDepth(true)
+    render.clearDepth()
+        
     func()
 end
 
