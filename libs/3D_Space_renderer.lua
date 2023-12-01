@@ -55,7 +55,7 @@ function render.createRenderer:draw(func)
 end
 
 function render.createRenderer:toScreen(vector)
-    local vec=self.renderer:worldToLocal(trace.intersectRayWithPlane(render.getOrigin(),(vector-render.getOrigin()):getNormalized(),self.renderer:getPos(),self.renderer:getUp())or Vector())*(self.data.size*self.data.scale/1.8)+Vector(512)
+    local vec=self.renderer:worldToLocal(trace.intersectRayWithPlane(render.getOrigin(),(vector-render.getOrigin()):getNormalized(),self.renderer:getPos(),self.renderer:getUp())or Vector())*((5/self.data.size)*30/1.8)+Vector(512)
     
     return {
         x=vec[2],
