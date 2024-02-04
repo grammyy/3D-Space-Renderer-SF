@@ -43,7 +43,6 @@ if SERVER then
     end)
 
 else
-    
     require("libs/3D_Space_renderer.lua")
     
     local sync={}
