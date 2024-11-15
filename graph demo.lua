@@ -1,9 +1,9 @@
 --@name 3D Graph demo
 --@author Elias
---@include 3D_Space_renderer.txt
+--@include libs/3D_Space_renderer.lua
 --@client
 
-require("3D_Space_renderer.txt")
+require("libs/3D_Space_renderer.lua")
 
 local space=render.createRenderer:new({
     type="3d",
@@ -34,7 +34,7 @@ hook.add("renderoffscreen","",function()
                 end
             
                 render.setColor(Color(210,210,210))
-                render.draw3DWireframeBox(chip():getPos(),chip():getAngles(),Vector(-5),Vector(5))
+                render.draw3DWireframeBox(chip():getPos(),chip():getAngles(),Vector(-5),Vector(5), false)
                 
                 coroutine.yield()
             end)

@@ -1,9 +1,9 @@
 --@name Planets demo
 --@author Elias
---@include 3D_Space_renderer.txt
+--@include libs/3D_Space_renderer.lua
 --@client
 
-require("3D_Space_renderer.txt")
+require("libs/3D_Space_renderer.lua")
 
 local rotate=0
 local thread=nil
@@ -52,8 +52,8 @@ end
 
 local space=render.createRenderer:new({
     type="3d",
-    size=10,
-    scale=3,
+    size=5,
+    scale=6,
     pos=chip():getPos(),
 },chip())
 local thread=nil
@@ -98,15 +98,15 @@ hook.add("renderoffscreen","",function()
                 
                 render.popViewMatrix()
                 
-                local offset=chip():getPos()-Vector(0,0,0.5)
-                local mer=space:toScreen(offset+mercury:getForward()*3.5)
-                local ven=space:toScreen(offset+venus:getForward()*5)
-                local ear=space:toScreen(offset+earth:getForward()*7.5)
-                local mar=space:toScreen(offset+mars:getForward()*10.5)
-                local jup=space:toScreen(offset+jupiter:getForward()*14.5)
-                local sat=space:toScreen(offset+saturn:getForward()*19.5)
+                local offset=chip():getPos()
+                local mer=space:toScreen(offset+mercury:getForward()*3)
+                local ven=space:toScreen(offset+venus:getForward()*4.5)
+                local ear=space:toScreen(offset+earth:getForward()*7)
+                local mar=space:toScreen(offset+mars:getForward()*10)
+                local jup=space:toScreen(offset+jupiter:getForward()*14)
+                local sat=space:toScreen(offset+saturn:getForward()*19)
                 
-                render.setFont("DermaDefault")
+                render.setFont("DermaLarge")
                 render.drawText(mer.x,mer.y,"Mercury",1)
                 render.drawText(ven.x,ven.y,"Venus",1)
                 render.drawText(ear.x,ear.y,"Earth",1)
